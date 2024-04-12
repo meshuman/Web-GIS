@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Points of Interest Map</title>
+    {% load static %}
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        #map { height: 400px; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        var map = L.map('map').setView([{{ pois.first.location.y }}, {{ pois.first.location.x }}], 10);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        {% for poi in pois %}
+            L.marker([{{ poi.location.y }}, {{ poi.location.x }}]).addTo(map)
+                .bindPopup("{{ poi.name }}");
+        {% endfor %}
+    </script>
+</body>
+</html>

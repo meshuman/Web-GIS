@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet.js Map with OSM Basemap</title>
+    <!-- Add Leaflet.js library -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        /* Set the map container height */
+        #map { height: 800px; width:auto; }
+    </style>
+</head>
+<body>
+    <!-- Create a div for the map -->
+    <div id="map"></div>
+
+    <!-- Initialize the map -->
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([27.34, 85.23], 7);
+
+        // Add OpenStreetMap basemap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+         const district = L.tileLayer.wms('http://localhost:8080/geoserver/wms', {
+            layers: 'np:district',
+            format: 'image/png',
+            transparent: true
+        }).addTo(map);
+
+        // Fetch data from the API
+        fetch('../gee-data/')
+            .then(response => response.json()) // Parse JSON response
+            .then(data => {
+                 // Add custom XYZ tile layer
+                L.tileLayer(data.mapurl, {
+                    attribution: 'GEE data'
+                }).addTo(map);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    </script>
+</body>
+</html>
